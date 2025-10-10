@@ -5,25 +5,28 @@
 <style>
   :root { --bg:#fbfbfb; --ink:#111; --card:#fff; --accent:#2563eb; }
   * { box-sizing: border-box; }
+  html, body { height:100%; }
   body{font:14px/1.4 system-ui,Segoe UI,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink); margin:0;}
-  header{padding:12px 12px 6px;}
+  header{padding:10px 12px 4px;}
   h1{margin:0; font-size:22px; line-height:1.15; letter-spacing:.2px;}
-  .container{display:grid; grid-template-columns:1fr; gap:10px; padding:0 10px 12px;}
+  .container{display:grid; grid-template-columns:1fr; gap:8px; padding:0 8px 8px;}
+  @media (min-width: 980px){
+    .container{grid-template-columns: minmax(640px,1fr) 520px; align-items:start; gap:12px; padding:0 12px 12px;}
+  }
   .panel{background:var(--card); border:1px solid #e2e2e2; border-radius:12px;}
-  .canvasWrap{padding:6px; overflow:hidden;}
-  #svg{display:block; width:100%; height:auto; max-height:48vh;}
+  .canvasWrap{padding:4px; overflow:hidden;}
+  #svg{display:block; width:100%; height:auto; max-height:86vh;}
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
   .dim{stroke:#111; stroke-width:1.8; fill:none; marker-start:url(#arrowTip); marker-end:url(#arrowTip)}
   .lbl{font-weight:700; font-size:14px; fill:#111}
-  .title{font-weight:800; font-size:14px}
   .area{font-weight:800; font-size:16px}
-  .inputs{padding:8px 8px 6px}
-  .legend{font-weight:800; font-size:16px; margin:0 0 4px 0;}
-  .row{display:grid; grid-template-columns:auto 56px; align-items:center; gap:6px; margin:6px 0 10px;}
-  .row label{font-weight:600; font-size:14px;}
-  .badge{display:inline-block; min-width:48px; padding:4px 6px; text-align:center; border:1px solid #dcdcdc; border-radius:8px; font-weight:700; background:#f7f7f7;}
-  .slider{grid-column: 1 / 3; width:100%; height:36px; display:flex; align-items:center;}
+  .inputs{padding:8px}
+  .row{display:grid; grid-template-columns:auto 64px 28px 1fr; align-items:center; gap:8px; margin:6px 0;}
+  .row label{font-weight:600; white-space:nowrap;}
+  .row input[type="number"]{width:64px; padding:6px 6px; text-align:right; font:600 14px system-ui; border:1px solid #dcdcdc; border-radius:8px; background:#fff;}
+  .unit{color:#333; white-space:nowrap;}
+  .slider{width:100%; height:34px; display:flex; align-items:center; justify-content:flex-end;}
   input[type="range"]{width:100%; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; background:#d7def0; outline:none;}
   input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:28px; height:28px; border-radius:50%; background:var(--accent); border:2px solid #0b3ea8; box-shadow:0 1px 2px rgba(0,0,0,.25); }
   input[type="range"]::-moz-range-thumb{ width:28px; height:28px; border-radius:50%; background:var(--accent); border:2px solid #0b3ea8; }
@@ -35,7 +38,7 @@
 
 <div class="container">
   <div class="panel canvasWrap">
-    <svg id="svg" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" aria-label="Cross section" preserveAspectRatio="xMidYMid meet">
+    <svg id="svg" viewBox="0 0 1300 820" xmlns="http://www.w3.org/2000/svg" aria-label="Cross section" preserveAspectRatio="xMidYMid meet">
       <defs>
         <pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
           <line x1="0" y1="0" x2="0" y2="12" stroke="#9aa3aa" stroke-width="2"/>
@@ -45,36 +48,41 @@
         </marker>
       </defs>
 
-      <text x="18" y="26" class="title">Cross Section</text>
       <polygon id="shape" class="outline" points=""/>
       <g id="proj" class="proj"></g>
       <g id="dims" class="dim"></g>
       <g id="labels" class="lbl"></g>
       <text id="chText" class="lbl">~ 15° chamfer</text>
-      <text id="areaText" class="area" x="18" y="676"></text>
+      <text id="areaText" class="area" x="18" y="804"></text>
     </svg>
   </div>
 
   <div class="panel inputs">
-    <div class="legend">Inputs</div>
     <div class="row">
-      <label for="D_range">D = Depth</label>
-      <span id="D_badge" class="badge">24</span>
+      <label for="D_val">D = Depth</label>
+      <input id="D_val" type="number" min="24" max="50" step="1" value="24">
+      <div class="unit">mm</div>
       <div class="slider"><input id="D_range" type="range" min="24" max="50" step="1" value="24"></div>
     </div>
+
     <div class="row">
-      <label for="T_range">T = Thickness</label>
-      <span id="T_badge" class="badge">70</span>
+      <label for="T_val">T = Thickness</label>
+      <input id="T_val" type="number" min="2" max="70" step="1" value="70">
+      <div class="unit">mm</div>
       <div class="slider"><input id="T_range" type="range" min="2" max="70" step="1" value="70"></div>
     </div>
+
     <div class="row">
-      <label for="A_range">A = Wing A</label>
-      <span id="A_badge" class="badge">30</span>
+      <label for="A_val">A = Wing A</label>
+      <input id="A_val" type="number" min="16" max="70" step="1" value="30">
+      <div class="unit">mm</div>
       <div class="slider"><input id="A_range" type="range" min="16" max="70" step="1" value="30"></div>
     </div>
-    <div class="row" style="margin-bottom:4px">
-      <label for="B_range">B = Wing B</label>
-      <span id="B_badge" class="badge">16</span>
+
+    <div class="row">
+      <label for="B_val">B = Wing B</label>
+      <input id="B_val" type="number" min="16" max="42" step="1" value="16">
+      <div class="unit">mm</div>
       <div class="slider"><input id="B_range" type="range" min="16" max="42" step="1" value="16"></div>
     </div>
   </div>
@@ -83,8 +91,8 @@
 <script>
 (function(){
   const $ = id => document.getElementById(id);
-  const Dr = $('D_range'), Tr = $('T_range'), Ar = $('A_range'), Br = $('B_range');
-  const D_badge = $('D_badge'), T_badge = $('T_badge'), A_badge = $('A_badge'), B_badge = $('B_badge');
+  const Dv=$('D_val'), Tv=$('T_val'), Av=$('A_val'), Bv=$('B_val');
+  const Dr=$('D_range'), Tr=$('T_range'), Ar=$('A_range'), Br=$('B_range');
 
   const shape = document.getElementById('shape');
   const gProj = document.getElementById('proj');
@@ -94,26 +102,30 @@
   const areaText = document.getElementById('areaText');
 
   let s = 4;
-  let margin = { l:60, t:70, r:70, b:120 };
-  const projOver = 8, gap = 38, tan15 = Math.tan(15 * Math.PI/180);
+  let margin = { l:56, t:64, r:56, b:120 };
+  const projOver = 10, gap = 40, tan15 = Math.tan(15 * Math.PI/180);
   const BMAX = 42;
 
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+  function link(num, rng){ num.addEventListener('input', ()=>{ rng.value=num.value; update(); });
+                           rng.addEventListener('input', ()=>{ num.value=rng.value; update(); }); }
+  [ [Dv,Dr],[Tv,Tr],[Av,Ar],[Bv,Br] ].forEach(([n,r])=>link(n,r));
 
   function computeScale(D,T){
     const svg = document.getElementById('svg');
-    const cw = svg.clientWidth || 1100;
-    const ch = svg.clientHeight || 700;
-    if (cw < 420){ margin = { l:46, t:64, r:56, b:108 }; }
-    const innerW = Math.max(180, cw - (margin.l + margin.r));
-    const innerH = Math.max(180, ch - (margin.t + margin.b));
-    const sx = innerW / (T + 36);
-    const sy = innerH / (D + 36);
-    s = Math.max(3.6, Math.min(9.5, Math.min(sx, sy)));
+    const cw = svg.clientWidth || 1300;
+    a = 1
+    const ch = svg.clientHeight || 820;
+    if (cw < 420){ margin = { l:40, t:56, r:48, b:110 }; } else { margin = { l:56, t:64, r:56, b:120 }; }
+    const innerW = Math.max(220, cw - (margin.l + margin.r));
+    const innerH = Math.max(240, ch - (margin.t + margin.b));
+    const sx = innerW / (T + 48);
+    const sy = innerH / (D + 48);
+    s = Math.max(3.8, Math.min(11, Math.min(sx, sy)));
   }
 
   function enforce(){
-    let D = +Dr.value||24, T = +Tr.value||70, A = +Ar.value||30, B = +Br.value||16;
+    let D = +Dv.value||24, T = +Tv.value||70, A = +Av.value||30, B = +Bv.value||16;
     B = clamp(B, 16, BMAX);
     D = clamp(D, 24, 50);
     if (B > 16){ D = B + 8; if (D > 50){ D = 50; B = 42; } }
@@ -130,14 +142,14 @@
     }
     A = clamp(Math.max(A, Areq, 16), 16, 70);
     if (A > T) T = clamp(A, Tmin, 70);
-
-    Dr.min = "24"; Dr.max = "50"; Dr.value = String(D);
-    Tr.min = String(Math.min(70, Math.ceil(1.5*D))); Tr.max = "70"; Tr.value = String(T);
-    Ar.min = String(Math.max(16, Math.ceil((D - B) / tan15))); Ar.max = "70"; Ar.value = String(A);
-    Br.min = "16"; Br.max = String(BMAX); Br.value = String(B);
-
-    D_badge.textContent = D; T_badge.textContent = T; A_badge.textContent = A; B_badge.textContent = B;
-
+    Dv.value = Dr.value = String(D);
+    Tv.value = Tr.value = String(T);
+    Av.value = Ar.value = String(A);
+    Bv.value = Br.value = String(B);
+    Tr.min = String(Math.min(70, Math.ceil(1.5*D))); Tr.max = "70";
+    Ar.min = String(Math.max(16, Math.ceil((D - B) / tan15))); Ar.max = "70";
+    Br.min = "16"; Br.max = String(BMAX);
+    Dv.min = Dr.min = "24"; Dv.max = Dr.max = "50";
     computeScale(D,T);
     return {D,T,A,B};
   }
@@ -160,23 +172,23 @@
     shape.setAttribute('points', polyPts.map(p=>p.join(',')).join(' '));
     gProj.innerHTML=''; gDims.innerHTML=''; gLabels.innerHTML='';
     const xDimD = ox - 44;
-    addLine(gProj, ox, oy, xDimD - 8, oy, 'proj');
-    addLine(gProj, ox, yBottom, xDimD - 8, yBottom, 'proj');
+    addLine(gProj, ox, oy, xDimD - projOver, oy, 'proj');
+    addLine(gProj, ox, yBottom, xDimD - projOver, yBottom, 'proj');
     addLine(gDims, xDimD, oy, xDimD, yBottom, 'dim');
     addText(gLabels, xDimD - 18, oy + (Hpx/2) + 4, 'D');
     const yDimT = yBottom + gap;
-    addLine(gProj, ox, yBottom, ox, yDimT + 8, 'proj');
-    addLine(gProj, xRight, yBottom, xRight, yDimT + 8, 'proj');
+    addLine(gProj, ox, yBottom, ox, yDimT + projOver, 'proj');
+    addLine(gProj, xRight, yBottom, xRight, yDimT + projOver, 'proj');
     addLine(gDims, ox, yDimT, xRight, yDimT, 'dim');
     addText(gLabels, ox + (Wpx/2), yDimT + 24, 'T');
     const yDimA = oy - gap;
-    addLine(gProj, ox, oy, ox, yDimA - 8, 'proj');
-    addLine(gProj, xA, yBtop, xA, yDimA - 8, 'proj');
+    addLine(gProj, ox, oy, ox, yDimA - projOver, 'proj');
+    addLine(gProj, xA, yBtop, xA, yDimA - projOver, 'proj');
     addLine(gDims, ox, yDimA, xA, yDimA, 'dim');
     addText(gLabels, ox + (xA - ox)/2, yDimA - 10, 'A');
     const xDimB = xRight + 44;
-    addLine(gProj, xRight, yBtop, xDimB + 8, yBtop, 'proj');
-    addLine(gProj, xRight, yBottom, xDimB + 8, yBottom, 'proj');
+    addLine(gProj, xRight, yBtop, xDimB + projOver, yBtop, 'proj');
+    addLine(gProj, xRight, yBottom, xDimB + projOver, yBottom, 'proj');
     addLine(gDims, xDimB, yBtop, xDimB, yBottom, 'dim');
     addText(gLabels, xDimB + 18, yBtop + (yBottom - yBtop)/2 + 4, 'B');
     chText.textContent = "\u223C 15\u00B0 chamfer";
@@ -186,7 +198,7 @@
     areaText.textContent = `Area: ${Math.round(area)} mm²`;
   }
 
-  ['input','change'].forEach(ev => [Dr,Tr,Ar,Br].forEach(el => el.addEventListener(ev, update)));
+  ['input','change'].forEach(ev => [Dv,Tv,Av,Bv,Dr,Tr,Ar,Br].forEach(el => el.addEventListener(ev, update)));
   window.addEventListener('resize', update);
   update();
 })();
