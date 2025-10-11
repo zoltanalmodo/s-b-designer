@@ -174,20 +174,20 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(36, Math.min(52, cw * 0.11));
-    const topPad = Math.max(52, Math.min(76, ch * 0.15));
-    const bottomPad = Math.max(96, Math.min(142, ch * 0.24));
+    const sidePad = Math.max(44, Math.min(60, cw * 0.14));
+    const topPad = Math.max(60, Math.min(88, ch * 0.18));
+    const bottomPad = Math.max(112, Math.min(164, ch * 0.28));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const widthMargin = Math.max(16, cw * 0.05);
-    const heightMargin = Math.max(22, ch * 0.07);
+    const widthMargin = Math.max(28, cw * 0.08);
+    const heightMargin = Math.max(34, ch * 0.11);
     const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
     const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
     const sx = availableW / T;
     const sy = availableH / D;
     const safeS = Math.min(sx, sy);
-    s = Math.min(25, safeS);
+    s = Math.min(24, safeS * 0.9);
     const actualW = T * s + leftExtra + rightExtra + widthMargin * 2;
     const actualH = D * s + topPad + bottomPad + heightMargin * 2;
     const extraW = Math.max(0, cw - actualW);
@@ -251,7 +251,7 @@
     const polyPts = [[ox,yBottom],[xRight,yBottom],[xRight,yBtop],[xA,yBtop],[ox,oy],[ox,yBottom]];
     shape.setAttribute('points', polyPts.map(p=>p.join(',')).join(' '));
     gProj.innerHTML=''; gDims.innerHTML=''; gLabels.innerHTML='';
-    const dimOffset = Math.max(32, Math.min(72, s * 7));
+    const dimOffset = Math.max(48, Math.min(96, s * 9));
     const xDimD = ox - dimOffset;
     addLine(gProj, ox, oy, xDimD - projOver, oy, 'proj');
     addLine(gProj, ox, yBottom, xDimD - projOver, yBottom, 'proj');
@@ -278,7 +278,7 @@
     chText.setAttribute('y', oy - 18);
     const area = T*D - (T - A)*(D - B) - 0.5 * A * (D - B);
     areaText.textContent = `Area: ${Math.round(area)} mm²`;
-    const areaY = Math.min(804, yBottom + gap + 52);
+    const areaY = Math.min(804, yBottom + gap + 60);
     areaText.setAttribute('x', ox + Wpx / 2);
     areaText.setAttribute('y', areaY);
     areaText.setAttribute('text-anchor','middle');
