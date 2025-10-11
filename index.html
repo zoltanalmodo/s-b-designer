@@ -173,30 +173,32 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(24, Math.min(48, cw * 0.1));
-    const topPad = Math.max(44, Math.min(70, ch * 0.13));
-    const bottomPad = Math.max(80, Math.min(132, ch * 0.2));
+    const sidePad = Math.max(28, Math.min(52, cw * 0.1));
+    const topPad = Math.max(48, Math.min(72, ch * 0.14));
+    const bottomPad = Math.max(88, Math.min(138, ch * 0.22));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const availableW = Math.max(140, cw - (leftExtra + rightExtra));
-    const availableH = Math.max(200, ch - (topPad + bottomPad));
+    const widthMargin = Math.max(16, cw * 0.04);
+    const heightMargin = Math.max(22, ch * 0.06);
+    const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
+    const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
     const sx = availableW / T;
     const sy = availableH / D;
     const safeS = Math.min(sx, sy);
-    s = Math.min(32, safeS);
-    const actualW = T * s + leftExtra + rightExtra;
-    const actualH = D * s + topPad + bottomPad;
+    s = Math.min(30, safeS);
+    const actualW = T * s + leftExtra + rightExtra + widthMargin * 2;
+    const actualH = D * s + topPad + bottomPad + heightMargin * 2;
     const extraW = Math.max(0, cw - actualW);
     const extraH = Math.max(0, ch - actualH);
     margin = {
-      l: leftExtra + extraW / 2,
-      r: rightExtra + extraW / 2,
-      t: topPad + extraH / 2,
-      b: bottomPad + extraH / 2
+      l: leftExtra + widthMargin + extraW / 2,
+      r: rightExtra + widthMargin + extraW / 2,
+      t: topPad + heightMargin + extraH / 2,
+      b: bottomPad + heightMargin + extraH / 2
     };
-    viewW = actualW + extraW;
-    viewH = actualH + extraH;
+    viewW = cw;
+    viewH = ch;
   }
 
   function enforce(){
