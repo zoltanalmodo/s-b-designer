@@ -15,8 +15,6 @@
     display:flex;
     flex-direction:column;
   }
-  header{padding:10px 12px 4px;}
-  h1{margin:0; font-size:22px; line-height:1.15; letter-spacing:.2px; color:#ff8c00;}
   .container{
     display:grid;
     grid-template-columns:1fr;
@@ -39,7 +37,7 @@
   }
   .panel{background:var(--card); border:1px solid #e2e2e2; border-radius:12px;}
   .canvasWrap{
-    padding:10px;
+    padding:6px 10px;
     overflow:hidden;
     display:flex;
     align-items:center;
@@ -60,14 +58,14 @@
   .dim{stroke:#111; stroke-width:1.8; fill:none; marker-start:url(#arrowTip); marker-end:url(#arrowTip)}
   .lbl{font-weight:700; font-size:20px; fill:#111}
   .lbl.chamfer{font-size:16px; font-weight:600;}
-  .area{font-weight:800; font-size:20px}
+  .area{font-weight:600; font-size:16px}
   .inputs{padding:10px 12px}
   .row{
     display:grid;
     grid-template-columns:auto max-content max-content minmax(160px,1fr);
     align-items:center;
     gap:10px;
-    margin:6px 0;
+    margin:3px 0;
   }
   .row label{font-weight:600; white-space:nowrap;}
   .row input[type="number"]{width:72px; padding:6px 6px; text-align:right; font:600 14px system-ui; border:1px solid #dcdcdc; border-radius:8px; background:#fff; justify-self:end;}
@@ -86,10 +84,6 @@
     input[type="range"]{min-width:100px; max-width:240px;}
   }
 </style>
-
-<header>
-  <h1>stretcher bar designer</h1>
-</header>
 
 <div class="container">
   <div class="panel canvasWrap">
@@ -174,9 +168,9 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(44, Math.min(60, cw * 0.14));
-    const topPad = Math.max(60, Math.min(88, ch * 0.18));
-    const bottomPad = Math.max(112, Math.min(164, ch * 0.28));
+    const sidePad = Math.max(44, Math.min(58, cw * 0.13));
+    const topPad = Math.max(48, Math.min(72, ch * 0.14));
+    const bottomPad = Math.max(96, Math.min(148, ch * 0.26));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
@@ -273,15 +267,16 @@
     addLine(gDims, xDimB, yBtop, xDimB, yBottom, 'dim');
     addText(gLabels, xDimB + 22, yBtop + (yBottom - yBtop)/2 + 6, 'B');
     chText.textContent = "\u223C 15\u00B0 chamfer";
-    chText.setAttribute('text-anchor','middle');
-    chText.setAttribute('x', ox + Wpx / 2);
-    chText.setAttribute('y', oy - 18);
+    chText.setAttribute('text-anchor','end');
+    chText.setAttribute('x', xRight);
+    chText.setAttribute('y', oy - 14);
     const area = T*D - (T - A)*(D - B) - 0.5 * A * (D - B);
-    areaText.textContent = `Area: ${Math.round(area)} mm²`;
-    const areaY = Math.min(804, yBottom + gap + 60);
-    areaText.setAttribute('x', ox + Wpx / 2);
+    void area;
+    const areaY = Math.min(804, yBottom + gap + 46);
+    areaText.textContent = chText.textContent;
+    areaText.setAttribute('x', xRight);
     areaText.setAttribute('y', areaY);
-    areaText.setAttribute('text-anchor','middle');
+    areaText.setAttribute('text-anchor','end');
     const bbox = drawing.getBBox();
     const vb = svgEl.viewBox.baseVal;
     const centerX = vb.x + vb.width / 2;
