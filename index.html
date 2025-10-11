@@ -161,8 +161,8 @@
 
   let s = 4;
   let margin = { l:56, t:64, r:56, b:120 };
+  let viewW = 1300, viewH = 820;
   const projOver = 10, gap = 40, tan15 = Math.tan(15 * Math.PI/180);
-  const dimPad = 54;
   const BMAX = 42;
 
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
@@ -173,26 +173,30 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
+    const sidePad = Math.max(24, Math.min(48, cw * 0.1));
+    const topPad = Math.max(44, Math.min(70, ch * 0.13));
+    const bottomPad = Math.max(80, Math.min(132, ch * 0.2));
+    const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const minTop = 64;
-    const minBottom = 120;
-    const availableW = Math.max(200, cw - (leftExtra + rightExtra));
-    const availableH = Math.max(200, ch - (minTop + minBottom));
+    const availableW = Math.max(140, cw - (leftExtra + rightExtra));
+    const availableH = Math.max(200, ch - (topPad + bottomPad));
     const sx = availableW / T;
     const sy = availableH / D;
     const safeS = Math.min(sx, sy);
-    s = Math.min(28, Math.max(6, safeS));
+    s = Math.min(32, safeS);
     const actualW = T * s + leftExtra + rightExtra;
-    const actualH = D * s + minTop + minBottom;
+    const actualH = D * s + topPad + bottomPad;
     const extraW = Math.max(0, cw - actualW);
     const extraH = Math.max(0, ch - actualH);
     margin = {
       l: leftExtra + extraW / 2,
       r: rightExtra + extraW / 2,
-      t: minTop + extraH / 2,
-      b: minBottom + extraH / 2
+      t: topPad + extraH / 2,
+      b: bottomPad + extraH / 2
     };
+    viewW = actualW + extraW;
+    viewH = actualH + extraH;
   }
 
   function enforce(){
@@ -235,6 +239,7 @@
   function update(){
     drawing.setAttribute('transform','');
     const {D,T,A,B} = enforce();
+    svgEl.setAttribute('viewBox', `0 0 ${viewW} ${viewH}`);
     const ox = margin.l, oy = margin.t;
     const Wpx = T*s, Hpx = D*s;
     const xA = ox + A*s;
