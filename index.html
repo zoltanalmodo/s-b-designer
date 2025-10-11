@@ -23,19 +23,21 @@
     padding:0 4px 12px;
     flex:1 1 auto;
     min-height:0;
+    margin-top:12px;
   }
   @media (min-width: 980px){
     .container{
-      grid-template-columns:minmax(0,1fr) minmax(320px,420px);
+      grid-template-columns:minmax(0,800px);
       grid-auto-rows:minmax(0,1fr);
       align-items:stretch;
+      justify-content:center;
       gap:18px;
       padding:0 18px 18px;
       max-width:1440px;
       margin:0 auto;
     }
   }
-  .panel{background:var(--card); border:1px solid #e2e2e2; border-radius:12px;}
+  .panel{background:var(--card); border:1px solid rgba(0,0,0,0.88); border-radius:12px;}
   .canvasWrap{
     padding:8px 12px;
     overflow:hidden;
@@ -43,7 +45,8 @@
     align-items:center;
     justify-content:center;
     height:100%;
-    min-height:clamp(320px, 68vh, 860px);
+    min-height:clamp(260px, 60vh, 760px);
+    flex:0 0 auto;
   }
   #svg{
     display:block;
@@ -57,9 +60,8 @@
   .proj{stroke:#111; stroke-width:1; fill:none}
   .dim{stroke:#111; stroke-width:1.8; fill:none; marker-start:url(#arrowTip); marker-end:url(#arrowTip)}
   .lbl{font-weight:700; font-size:20px; fill:#111}
-  .lbl.chamfer{font-size:16px; font-weight:600;}
   .area{font-weight:600; font-size:16px}
-  .inputs{padding:10px 12px}
+  .inputs{padding:10px 12px; display:flex; flex-direction:column; gap:8px;}
   .row{
     display:grid;
     grid-template-columns:auto max-content max-content minmax(160px,1fr);
@@ -86,29 +88,27 @@
 </style>
 
 <div class="container">
-  <div class="panel canvasWrap">
-    <svg id="svg" viewBox="0 0 1300 820" xmlns="http://www.w3.org/2000/svg" aria-label="Cross section" preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
-          <line x1="0" y1="0" x2="0" y2="12" stroke="#9aa3aa" stroke-width="2"/>
-        </pattern>
-        <marker id="arrowTip" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-          <path d="M0,0 L10,5 L0,10 Z" fill="#111"/>
-        </marker>
-      </defs>
-
-      <g id="drawing">
-        <polygon id="shape" class="outline" points=""/>
-        <g id="proj" class="proj"></g>
-        <g id="dims" class="dim"></g>
-        <g id="labels" class="lbl"></g>
-        <text id="chText" class="lbl chamfer">~ 15° chamfer</text>
-        <text id="areaText" class="area" x="18" y="804"></text>
-      </g>
-    </svg>
-  </div>
-
   <div class="panel inputs">
+    <div class="canvasWrap">
+      <svg id="svg" viewBox="0 0 1300 820" xmlns="http://www.w3.org/2000/svg" aria-label="Cross section" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(30)">
+            <line x1="0" y1="0" x2="0" y2="12" stroke="#9aa3aa" stroke-width="2"/>
+          </pattern>
+          <marker id="arrowTip" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#111"/>
+          </marker>
+        </defs>
+
+        <g id="drawing">
+          <polygon id="shape" class="outline" points=""/>
+          <g id="proj" class="proj"></g>
+          <g id="dims" class="dim"></g>
+          <g id="labels" class="lbl"></g>
+          <text id="areaText" class="area" x="18" y="804"></text>
+        </g>
+      </svg>
+    </div>
     <div class="row">
       <label for="D_val">D = Depth</label>
       <input id="D_val" type="number" min="24" max="50" step="1" value="24">
@@ -151,7 +151,6 @@
   const gProj = document.getElementById('proj');
   const gDims = document.getElementById('dims');
   const gLabels = document.getElementById('labels');
-  const chText = document.getElementById('chText');
   const areaText = document.getElementById('areaText');
 
   let s = 4;
@@ -168,14 +167,14 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(48, Math.min(64, cw * 0.16));
-    const topPad = Math.max(56, Math.min(80, ch * 0.18));
-    const bottomPad = Math.max(104, Math.min(152, ch * 0.28));
+    const sidePad = Math.max(44, Math.min(58, cw * 0.13));
+    const topPad = sidePad;
+    const bottomPad = sidePad;
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const widthMargin = Math.max(30, cw * 0.1);
-    const heightMargin = Math.max(36, ch * 0.12);
+    const widthMargin = Math.max(28, cw * 0.08);
+    const heightMargin = widthMargin;
     const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
     const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
     const sx = availableW / T;
@@ -266,12 +265,9 @@
     addLine(gProj, xRight, yBottom, xDimB + projOver, yBottom, 'proj');
     addLine(gDims, xDimB, yBtop, xDimB, yBottom, 'dim');
     addText(gLabels, xDimB + 22, yBtop + (yBottom - yBtop)/2 + 6, 'B');
-    chText.textContent = "\u223C 15\u00B0 chamfer";
-    chText.setAttribute('text-anchor','end');
-    chText.setAttribute('x', xRight);
-    chText.setAttribute('y', oy - 14);
     const area = T*D - (T - A)*(D - B) - 0.5 * A * (D - B);
-    const areaY = Math.min(804, yBottom + gap + 54);
+    const areaSpace = Math.max(24, Math.min(gap + 54, margin.b - 12));
+    const areaY = Math.min(804, yBottom + areaSpace);
     areaText.textContent = `Area: ${Math.round(area)} mm²`;
     areaText.setAttribute('x', ox + Wpx / 2);
     areaText.setAttribute('y', areaY);
