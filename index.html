@@ -6,28 +6,55 @@
   :root { --bg:#fbfbfb; --ink:#111; --card:#fff; --accent:#2563eb; }
   * { box-sizing: border-box; }
   html, body { height:100%; }
-  body{font:14px/1.4 system-ui,Segoe UI,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink); margin:0;}
+  body{
+    font:14px/1.4 system-ui,Segoe UI,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
   header{padding:10px 12px 4px;}
-  h1{margin:0; font-size:22px; line-height:1.15; letter-spacing:.2px; color:#2563eb;}
+  h1{margin:0; font-size:22px; line-height:1.15; letter-spacing:.2px; color:#ff8c00;}
   .container{
     display:grid;
     grid-template-columns:1fr;
-    gap:8px;
-    padding:0 4px 8px;
+    grid-template-rows:minmax(0,1fr) auto;
+    gap:10px;
+    padding:0 4px 12px;
+    flex:1 1 auto;
+    min-height:0;
   }
   @media (min-width: 980px){
     .container{
       grid-template-columns:minmax(0,1fr) minmax(320px,420px);
-      align-items:start;
-      gap:16px;
-      padding:0 16px 16px;
-      max-width:1280px;
+      grid-auto-rows:minmax(0,1fr);
+      align-items:stretch;
+      gap:18px;
+      padding:0 18px 18px;
+      max-width:1440px;
       margin:0 auto;
     }
   }
   .panel{background:var(--card); border:1px solid #e2e2e2; border-radius:12px;}
-  .canvasWrap{padding:0; overflow:hidden;}
-  #svg{display:block; width:100%; height:auto; max-height:92vh;}
+  .canvasWrap{
+    padding:10px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+    min-height:clamp(360px, 72vh, 920px);
+  }
+  #svg{
+    display:block;
+    width:100%;
+    height:100%;
+    max-width:none;
+    max-height:none;
+    flex:1 1 auto;
+  }
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
   .dim{stroke:#111; stroke-width:1.8; fill:none; marker-start:url(#arrowTip); marker-end:url(#arrowTip)}
@@ -75,12 +102,14 @@
         </marker>
       </defs>
 
-      <polygon id="shape" class="outline" points=""/>
-      <g id="proj" class="proj"></g>
-      <g id="dims" class="dim"></g>
-      <g id="labels" class="lbl"></g>
-      <text id="chText" class="lbl">~ 15° chamfer</text>
-      <text id="areaText" class="area" x="18" y="804"></text>
+      <g id="drawing">
+        <polygon id="shape" class="outline" points=""/>
+        <g id="proj" class="proj"></g>
+        <g id="dims" class="dim"></g>
+        <g id="labels" class="lbl"></g>
+        <text id="chText" class="lbl">~ 15° chamfer</text>
+        <text id="areaText" class="area" x="18" y="804"></text>
+      </g>
     </svg>
   </div>
 
@@ -121,6 +150,8 @@
   const Dv=$('D_val'), Tv=$('T_val'), Av=$('A_val'), Bv=$('B_val');
   const Dr=$('D_range'), Tr=$('T_range'), Ar=$('A_range'), Br=$('B_range');
 
+  const svgEl = document.getElementById('svg');
+  const drawing = document.getElementById('drawing');
   const shape = document.getElementById('shape');
   const gProj = document.getElementById('proj');
   const gDims = document.getElementById('dims');
@@ -131,6 +162,7 @@
   let s = 4;
   let margin = { l:56, t:64, r:56, b:120 };
   const projOver = 10, gap = 40, tan15 = Math.tan(15 * Math.PI/180);
+  const dimPad = 54;
   const BMAX = 42;
 
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
@@ -139,16 +171,28 @@
   [ [Dv,Dr],[Tv,Tr],[Av,Ar],[Bv,Br] ].forEach(([n,r])=>link(n,r));
 
   function computeScale(D,T){
-    const svg = document.getElementById('svg');
-    const cw = svg.clientWidth || 1300;
-    a = 1
-    const ch = svg.clientHeight || 820;
-    if (cw < 420){ margin = { l:40, t:56, r:48, b:110 }; } else { margin = { l:56, t:64, r:56, b:120 }; }
-    const innerW = Math.max(220, cw - (margin.l + margin.r));
-    const innerH = Math.max(240, ch - (margin.t + margin.b));
-    const sx = innerW / (T + 48);
-    const sy = innerH / (D + 48);
-    s = Math.max(3.8, Math.min(11, Math.min(sx, sy)));
+    const cw = svgEl.clientWidth || 1300;
+    const ch = svgEl.clientHeight || 820;
+    const leftExtra = dimPad;
+    const rightExtra = dimPad;
+    const minTop = 64;
+    const minBottom = 120;
+    const availableW = Math.max(200, cw - (leftExtra + rightExtra));
+    const availableH = Math.max(200, ch - (minTop + minBottom));
+    const sx = availableW / T;
+    const sy = availableH / D;
+    const safeS = Math.min(sx, sy);
+    s = Math.min(28, Math.max(6, safeS));
+    const actualW = T * s + leftExtra + rightExtra;
+    const actualH = D * s + minTop + minBottom;
+    const extraW = Math.max(0, cw - actualW);
+    const extraH = Math.max(0, ch - actualH);
+    margin = {
+      l: leftExtra + extraW / 2,
+      r: rightExtra + extraW / 2,
+      t: minTop + extraH / 2,
+      b: minBottom + extraH / 2
+    };
   }
 
   function enforce(){
@@ -189,6 +233,7 @@
     e.setAttribute('class','lbl'); e.textContent=t; g.appendChild(e); return e; }
 
   function update(){
+    drawing.setAttribute('transform','');
     const {D,T,A,B} = enforce();
     const ox = margin.l, oy = margin.t;
     const Wpx = T*s, Hpx = D*s;
@@ -219,10 +264,21 @@
     addLine(gDims, xDimB, yBtop, xDimB, yBottom, 'dim');
     addText(gLabels, xDimB + 18, yBtop + (yBottom - yBtop)/2 + 4, 'B');
     chText.textContent = "\u223C 15\u00B0 chamfer";
-    chText.setAttribute('x', xRight + 16);
-    chText.setAttribute('y', oy - 8);
+    chText.setAttribute('text-anchor','middle');
+    chText.setAttribute('x', ox + Wpx / 2);
+    chText.setAttribute('y', oy - 12);
     const area = T*D - (T - A)*(D - B) - 0.5 * A * (D - B);
     areaText.textContent = `Area: ${Math.round(area)} mm²`;
+    const areaY = Math.min(804, yBottom + gap + 42);
+    areaText.setAttribute('x', ox + Wpx / 2);
+    areaText.setAttribute('y', areaY);
+    areaText.setAttribute('text-anchor','middle');
+    const bbox = drawing.getBBox();
+    const vb = svgEl.viewBox.baseVal;
+    const centerX = vb.x + vb.width / 2;
+    const bboxCenterX = bbox.x + bbox.width / 2;
+    const dx = centerX - bboxCenterX;
+    drawing.setAttribute('transform', `translate(${dx},0)`);
   }
 
   ['input','change'].forEach(ev => [Dv,Tv,Av,Bv,Dr,Tr,Ar,Br].forEach(el => el.addEventListener(ev, update)));
