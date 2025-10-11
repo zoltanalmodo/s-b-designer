@@ -58,7 +58,8 @@
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
   .dim{stroke:#111; stroke-width:1.8; fill:none; marker-start:url(#arrowTip); marker-end:url(#arrowTip)}
-  .lbl{font-weight:700; font-size:14px; fill:#111}
+  .lbl{font-weight:700; font-size:20px; fill:#111}
+  .lbl.chamfer{font-size:16px; font-weight:600;}
   .area{font-weight:800; font-size:20px}
   .inputs{padding:10px 12px}
   .row{
@@ -107,7 +108,7 @@
         <g id="proj" class="proj"></g>
         <g id="dims" class="dim"></g>
         <g id="labels" class="lbl"></g>
-        <text id="chText" class="lbl">~ 15° chamfer</text>
+        <text id="chText" class="lbl chamfer">~ 15° chamfer</text>
         <text id="areaText" class="area" x="18" y="804"></text>
       </g>
     </svg>
@@ -173,20 +174,20 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(28, Math.min(52, cw * 0.1));
-    const topPad = Math.max(48, Math.min(72, ch * 0.14));
-    const bottomPad = Math.max(88, Math.min(138, ch * 0.22));
+    const sidePad = Math.max(36, Math.min(52, cw * 0.11));
+    const topPad = Math.max(52, Math.min(76, ch * 0.15));
+    const bottomPad = Math.max(96, Math.min(142, ch * 0.24));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const widthMargin = Math.max(16, cw * 0.04);
-    const heightMargin = Math.max(22, ch * 0.06);
+    const widthMargin = Math.max(16, cw * 0.05);
+    const heightMargin = Math.max(22, ch * 0.07);
     const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
     const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
     const sx = availableW / T;
     const sy = availableH / D;
     const safeS = Math.min(sx, sy);
-    s = Math.min(30, safeS);
+    s = Math.min(25, safeS);
     const actualW = T * s + leftExtra + rightExtra + widthMargin * 2;
     const actualH = D * s + topPad + bottomPad + heightMargin * 2;
     const extraW = Math.max(0, cw - actualW);
@@ -250,33 +251,34 @@
     const polyPts = [[ox,yBottom],[xRight,yBottom],[xRight,yBtop],[xA,yBtop],[ox,oy],[ox,yBottom]];
     shape.setAttribute('points', polyPts.map(p=>p.join(',')).join(' '));
     gProj.innerHTML=''; gDims.innerHTML=''; gLabels.innerHTML='';
-    const xDimD = ox - 44;
+    const dimOffset = Math.max(32, Math.min(72, s * 7));
+    const xDimD = ox - dimOffset;
     addLine(gProj, ox, oy, xDimD - projOver, oy, 'proj');
     addLine(gProj, ox, yBottom, xDimD - projOver, yBottom, 'proj');
     addLine(gDims, xDimD, oy, xDimD, yBottom, 'dim');
-    addText(gLabels, xDimD - 18, oy + (Hpx/2) + 4, 'D');
+    addText(gLabels, xDimD - 22, oy + (Hpx/2) + 6, 'D');
     const yDimT = yBottom + gap;
     addLine(gProj, ox, yBottom, ox, yDimT + projOver, 'proj');
     addLine(gProj, xRight, yBottom, xRight, yDimT + projOver, 'proj');
     addLine(gDims, ox, yDimT, xRight, yDimT, 'dim');
-    addText(gLabels, ox + (Wpx/2), yDimT + 24, 'T');
+    addText(gLabels, ox + (Wpx/2), yDimT + 32, 'T');
     const yDimA = oy - gap;
     addLine(gProj, ox, oy, ox, yDimA - projOver, 'proj');
     addLine(gProj, xA, yBtop, xA, yDimA - projOver, 'proj');
     addLine(gDims, ox, yDimA, xA, yDimA, 'dim');
-    addText(gLabels, ox + (xA - ox)/2, yDimA - 10, 'A');
-    const xDimB = xRight + 44;
+    addText(gLabels, ox + (xA - ox)/2, yDimA - 14, 'A');
+    const xDimB = xRight + dimOffset;
     addLine(gProj, xRight, yBtop, xDimB + projOver, yBtop, 'proj');
     addLine(gProj, xRight, yBottom, xDimB + projOver, yBottom, 'proj');
     addLine(gDims, xDimB, yBtop, xDimB, yBottom, 'dim');
-    addText(gLabels, xDimB + 18, yBtop + (yBottom - yBtop)/2 + 4, 'B');
+    addText(gLabels, xDimB + 22, yBtop + (yBottom - yBtop)/2 + 6, 'B');
     chText.textContent = "\u223C 15\u00B0 chamfer";
     chText.setAttribute('text-anchor','middle');
     chText.setAttribute('x', ox + Wpx / 2);
-    chText.setAttribute('y', oy - 12);
+    chText.setAttribute('y', oy - 18);
     const area = T*D - (T - A)*(D - B) - 0.5 * A * (D - B);
     areaText.textContent = `Area: ${Math.round(area)} mm²`;
-    const areaY = Math.min(804, yBottom + gap + 42);
+    const areaY = Math.min(804, yBottom + gap + 52);
     areaText.setAttribute('x', ox + Wpx / 2);
     areaText.setAttribute('y', areaY);
     areaText.setAttribute('text-anchor','middle');
