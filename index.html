@@ -37,13 +37,13 @@
   }
   .panel{background:var(--card); border:1px solid #e2e2e2; border-radius:12px;}
   .canvasWrap{
-    padding:6px 10px;
+    padding:8px 12px;
     overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
     height:100%;
-    min-height:clamp(360px, 72vh, 920px);
+    min-height:clamp(320px, 68vh, 860px);
   }
   #svg{
     display:block;
@@ -168,14 +168,14 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(44, Math.min(58, cw * 0.13));
-    const topPad = Math.max(48, Math.min(72, ch * 0.14));
-    const bottomPad = Math.max(96, Math.min(148, ch * 0.26));
+    const sidePad = Math.max(48, Math.min(64, cw * 0.16));
+    const topPad = Math.max(56, Math.min(80, ch * 0.18));
+    const bottomPad = Math.max(104, Math.min(152, ch * 0.28));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const widthMargin = Math.max(28, cw * 0.08);
-    const heightMargin = Math.max(34, ch * 0.11);
+    const widthMargin = Math.max(30, cw * 0.1);
+    const heightMargin = Math.max(36, ch * 0.12);
     const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
     const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
     const sx = availableW / T;
@@ -271,12 +271,11 @@
     chText.setAttribute('x', xRight);
     chText.setAttribute('y', oy - 14);
     const area = T*D - (T - A)*(D - B) - 0.5 * A * (D - B);
-    void area;
-    const areaY = Math.min(804, yBottom + gap + 46);
-    areaText.textContent = chText.textContent;
-    areaText.setAttribute('x', xRight);
+    const areaY = Math.min(804, yBottom + gap + 54);
+    areaText.textContent = `Area: ${Math.round(area)} mm²`;
+    areaText.setAttribute('x', ox + Wpx / 2);
     areaText.setAttribute('y', areaY);
-    areaText.setAttribute('text-anchor','end');
+    areaText.setAttribute('text-anchor','middle');
     const bbox = drawing.getBBox();
     const vb = svgEl.viewBox.baseVal;
     const centerX = vb.x + vb.width / 2;
