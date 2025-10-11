@@ -88,7 +88,7 @@
 </style>
 
 <div class="container">
-  <div class="panel inputs">
+  <div class="panel">
     <div class="canvasWrap">
       <svg id="svg" viewBox="0 0 1300 820" xmlns="http://www.w3.org/2000/svg" aria-label="Cross section" preserveAspectRatio="xMidYMid meet">
         <defs>
@@ -109,32 +109,34 @@
         </g>
       </svg>
     </div>
-    <div class="row">
-      <label for="D_val">D = Depth</label>
-      <input id="D_val" type="number" min="24" max="50" step="1" value="24">
-      <div class="unit">mm</div>
-      <div class="slider"><input id="D_range" type="range" min="24" max="50" step="1" value="24"></div>
-    </div>
+    <div class="inputs">
+      <div class="row">
+        <label for="D_val">D = Depth</label>
+        <input id="D_val" type="number" min="24" max="50" step="1" value="24">
+        <div class="unit">mm</div>
+        <div class="slider"><input id="D_range" type="range" min="24" max="50" step="1" value="24"></div>
+      </div>
 
-    <div class="row">
-      <label for="T_val">T = Thickness</label>
-      <input id="T_val" type="number" min="2" max="70" step="1" value="70">
-      <div class="unit">mm</div>
-      <div class="slider"><input id="T_range" type="range" min="2" max="70" step="1" value="70"></div>
-    </div>
+      <div class="row">
+        <label for="T_val">T = Thickness</label>
+        <input id="T_val" type="number" min="2" max="70" step="1" value="70">
+        <div class="unit">mm</div>
+        <div class="slider"><input id="T_range" type="range" min="2" max="70" step="1" value="70"></div>
+      </div>
 
-    <div class="row">
-      <label for="A_val">A = Wing A</label>
-      <input id="A_val" type="number" min="16" max="70" step="1" value="30">
-      <div class="unit">mm</div>
-      <div class="slider"><input id="A_range" type="range" min="16" max="70" step="1" value="30"></div>
-    </div>
+      <div class="row">
+        <label for="A_val">A = Wing A</label>
+        <input id="A_val" type="number" min="16" max="70" step="1" value="30">
+        <div class="unit">mm</div>
+        <div class="slider"><input id="A_range" type="range" min="16" max="70" step="1" value="30"></div>
+      </div>
 
-    <div class="row">
-      <label for="B_val">B = Wing B</label>
-      <input id="B_val" type="number" min="16" max="42" step="1" value="16">
-      <div class="unit">mm</div>
-      <div class="slider"><input id="B_range" type="range" min="16" max="42" step="1" value="16"></div>
+      <div class="row">
+        <label for="B_val">B = Wing B</label>
+        <input id="B_val" type="number" min="16" max="42" step="1" value="16">
+        <div class="unit">mm</div>
+        <div class="slider"><input id="B_range" type="range" min="16" max="42" step="1" value="16"></div>
+      </div>
     </div>
   </div>
 </div>
