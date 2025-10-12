@@ -26,8 +26,8 @@
     background:rgba(255,255,255,0.95);
     border:1px solid rgba(0,0,0,0.88);
     border-radius:14px;
-    padding:16px;
-    max-width:840px;
+    padding:12px;
+    max-width:820px;
     width:100%;
     display:flex;
     flex-direction:column;
@@ -36,7 +36,7 @@
   }
   @media (min-width: 980px){
     .container{padding:8px;}
-    .panel{padding:20px;}
+    .panel{padding:18px 20px;}
   }
   .canvasWrap{
     padding:0;
@@ -44,7 +44,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    min-height:clamp(300px, 58vh, 720px);
+    min-height:clamp(220px, 48vh, 640px);
   }
   #svg{
     display:block;
@@ -65,21 +65,21 @@
     padding:0;
     display:flex;
     flex-direction:column;
-    gap:10px;
+    gap:6px;
     background:rgba(199,206,255,0.25); /* debug: inputs block */
   }
   .row{
     display:grid;
     grid-template-columns:auto max-content max-content minmax(160px,1fr);
     align-items:center;
-    gap:10px;
-    margin:3px 0;
+    gap:8px;
+    margin:2px 0;
   }
   .row label{font-weight:600; white-space:nowrap;}
-  .row input[type="number"]{width:72px; padding:6px 6px; text-align:right; font:600 14px system-ui; border:1px solid #dcdcdc; border-radius:8px; background:#fff; justify-self:end;}
+  .row input[type="number"]{width:68px; padding:4px 5px; text-align:right; font:600 14px system-ui; border:1px solid #dcdcdc; border-radius:8px; background:#fff; justify-self:end;}
   .unit{color:#333; white-space:nowrap; justify-self:end; min-width:28px; text-align:right;}
-  .slider{width:100%; height:34px; display:flex; align-items:center; justify-content:flex-end;}
-  input[type="range"]{width:100%; max-width:320px; min-width:140px; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; background:#d7def0; outline:none;}
+  .slider{width:100%; height:30px; display:flex; align-items:center; justify-content:flex-end;}
+  input[type="range"]{width:100%; max-width:300px; min-width:120px; -webkit-appearance:none; appearance:none; height:3px; border-radius:2px; background:#d7def0; outline:none;}
   input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:28px; height:28px; border-radius:50%; background:var(--accent); border:2px solid #0b3ea8; box-shadow:0 1px 2px rgba(0,0,0,.25); }
   input[type="range"]::-moz-range-thumb{ width:28px; height:28px; border-radius:50%; background:var(--accent); border:2px solid #0b3ea8; }
   @media (max-width: 540px){
@@ -178,14 +178,14 @@
   function computeScale(D,T){
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
-    const sidePad = Math.max(48, Math.min(64, cw * 0.16));
-    const topPad = Math.max(56, Math.min(80, ch * 0.18));
-    const bottomPad = Math.max(104, Math.min(152, ch * 0.28));
+    const sidePad = Math.max(30, Math.min(44, cw * 0.115));
+    const topPad = Math.max(40, Math.min(56, ch * 0.12));
+    const bottomPad = Math.max(70, Math.min(110, ch * 0.18));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
-    const widthMargin = Math.max(30, cw * 0.1);
-    const heightMargin = Math.max(36, ch * 0.12);
+    const widthMargin = Math.max(18, cw * 0.06);
+    const heightMargin = Math.max(20, ch * 0.08);
     const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
     const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
     const sx = availableW / T;
@@ -255,7 +255,7 @@
     const polyPts = [[ox,yBottom],[xRight,yBottom],[xRight,yBtop],[xA,yBtop],[ox,oy],[ox,yBottom]];
     shape.setAttribute('points', polyPts.map(p=>p.join(',')).join(' '));
     gProj.innerHTML=''; gDims.innerHTML=''; gLabels.innerHTML='';
-    const dimOffset = Math.max(48, Math.min(96, s * 9));
+    const dimOffset = Math.max(36, Math.min(80, s * 7));
     const xDimD = ox - dimOffset;
     addLine(gProj, ox, oy, xDimD - projOver, oy, 'proj');
     addLine(gProj, ox, yBottom, xDimD - projOver, yBottom, 'proj');
