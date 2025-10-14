@@ -48,13 +48,13 @@
     .container{padding:8px;}
     .panel{padding:18px 20px;}
   }
-  .canvasWrap{
-    padding:0;
+   .canvasWrap{
+    padding:12px 12px 0 12px;
     overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
-    min-height:clamp(220px, 48vh, 640px);
+    min-height:clamp(320px, 65vh, 780px);
   }
   #svg{
     display:block;
@@ -63,7 +63,7 @@
     max-width:none;
     max-height:none;
     flex:1 1 auto;
-    background:rgba(255,206,206,0.25); /* debug: raw SVG footprint */
+    background:#fff;
   }
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
@@ -203,7 +203,7 @@
     const sx = availableW / T;
     const sy = availableH / D;
     const safeS = Math.min(sx, sy);
-    s = Math.min(24, safeS * 0.9);
+    s = Math.min(28, safeS);
     const actualW = T * s + leftExtra + rightExtra + widthMargin * 2;
     const actualH = D * s + topPad + bottomPad + heightMargin * 2;
     const extraW = Math.max(0, cw - actualW);
