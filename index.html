@@ -49,24 +49,18 @@
     .panel{padding:18px 20px;}
   }
   .canvasWrap{
-    padding:24px 18px 48px;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height:clamp(420px, 85vh, 900px);
-    background:#ffe3e3;
-    border-radius:16px;
+    width:100%;
+    padding:0;
+    margin:0 0 18px;
   }
   #svg{
     display:block;
     width:100%;
-    height:100%;
+    height:auto;
+    aspect-ratio:1300 / 820;
     max-width:none;
-    max-height:none;
-    flex:1 1 auto;
     background:#d9ecff;
-    border-radius:12px;
+    border-radius:16px;
   }
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
@@ -194,13 +188,13 @@
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
     const sidePad = Math.max(30, Math.min(44, cw * 0.115));
-    const topPad = Math.max(32, Math.min(56, ch * 0.12));
-    const bottomPad = Math.max(54, Math.min(110, ch * 0.18));
+    const topPad = Math.max(24, Math.min(56, ch * 0.12));
+    const bottomPad = Math.max(36, Math.min(110, ch * 0.18));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
     const widthMargin = Math.max(18, cw * 0.06);
-    const heightMargin = Math.max(16, ch * 0.08);
+    const heightMargin = Math.max(12, ch * 0.08);
     const frameHeight = topPad + bottomPad + heightMargin * 2;
     const rawAvailableW = cw - (leftExtra + rightExtra + widthMargin * 2);
     const rawAvailableH = ch - frameHeight;
