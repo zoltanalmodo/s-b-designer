@@ -20,7 +20,7 @@
     display:flex;
     justify-content:center;
     padding:12px;
-    background:rgba(255,231,150,0.5); /* fix: container padding */
+    background:rgba(255,231,150,0.5);
   }
   .panel{
     background:rgba(255,255,255,0.95);
@@ -46,7 +46,7 @@
     border-radius:0 0 14px 14px;
   }
   @media (min-width: 980px){
-    .container{padding:8px;}
+    .container{padding:12px;}
     .panel{padding:18px 20px;}
   }
   .canvasWrap{
@@ -74,7 +74,7 @@
     display:flex;
     flex-direction:column;
     gap:6px;
-    background:rgba(204,252,204,0.35); /* debug: inputs block */
+    background:rgba(204,252,204,0.35);
     border-bottom:0;
     margin:0;
   }
@@ -177,6 +177,7 @@
 
   let s = 4;
   let margin = { l:56, t:64, r:56, b:120 };
+  let viewW = 1300, viewH = 820;
   const projOver = 10, gap = 40, tan15 = Math.tan(15 * Math.PI/180);
   const BMAX = 42;
 
@@ -189,117 +190,55 @@
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
     const sidePad = Math.max(30, Math.min(44, cw * 0.115));
-    const topPad = Math.max(24, Math.min(56, ch * 0.12));
-    const bottomPad = Math.max(36, Math.min(110, ch * 0.18));
+    const topPad = Math.max(40, Math.min(56, ch * 0.12));
+    const bottomPad = Math.max(70, Math.min(110, ch * 0.18));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
     const widthMargin = Math.max(18, cw * 0.06);
-    const heightMargin = Math.max(12, ch * 0.08);
-    const frameHeight = topPad + bottomPad + heightMargin * 2;
-    const structuralW = leftExtra + rightExtra + widthMargin * 2;
-    const rawRoomW = Math.max(0, cw - structuralW);
-    const rawRoomH = Math.max(0, ch - frameHeight);
-    const padTargetX = Math.max(28, Math.min(96, cw * 0.08));
-    const padTargetY = Math.max(36, Math.min(110, ch * 0.1));
-    const maxPadX = rawRoomW > 0 ? Math.max(18, rawRoomW / 2.5) : 18;
-    const maxPadY = rawRoomH > 0 ? Math.max(24, rawRoomH / 2.5) : 24;
-    let innerPadX = Math.min(padTargetX, maxPadX);
-    let innerPadY = Math.min(padTargetY, maxPadY);
-    let usableWraw = rawRoomW - innerPadX * 2;
-    let usableHraw = rawRoomH - innerPadY * 2;
-    if (usableWraw < 140){
-      const deficitX = 140 - usableWraw;
-      innerPadX = Math.max(18, innerPadX - deficitX / 2);
-      usableWraw = rawRoomW - innerPadX * 2;
-    }
-    if (usableHraw < 50){
-      const deficitY = 50 - usableHraw;
-      innerPadY = Math.max(24, innerPadY - deficitY / 2);
-      usableHraw = rawRoomH - innerPadY * 2;
-    }
-    const usableW = Math.max(0, usableWraw);
-    const usableH = Math.max(0, usableHraw);
-    const sx = usableW > 0 ? usableW / T : Infinity;
-    const sy = usableH > 0 ? usableH / D : Infinity;
-    let safeS = Math.min(sx, sy);
-    if (rawRoomW > 0){
-      safeS = Math.min(safeS, rawRoomW / T);
-    }
-    if (rawRoomH > 0){
-      safeS = Math.min(safeS, rawRoomH / D);
-    }
-    if (!Number.isFinite(safeS) || safeS <= 0){
-      const fallbackW = rawRoomW > 0 ? rawRoomW / Math.max(T, 1) : 0.12;
-      const fallbackH = rawRoomH > 0 ? rawRoomH / Math.max(D, 1) : 0.12;
-      safeS = Math.max(0.12, Math.min(fallbackW, fallbackH));
-    }
-    const shrink = cw <= 540 ? 0.96 : cw <= 900 ? 0.98 : 1;
-    safeS *= shrink;
-    s = Math.min(28, Math.max(0.12, safeS));
-    const actualW = T * s + structuralW + innerPadX * 2;
-    const actualH = D * s + frameHeight + innerPadY * 2;
+    const heightMargin = Math.max(20, ch * 0.08);
+    const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
+    const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
+    const sx = availableW / T;
+    const sy = availableH / D;
+    const safeS = Math.min(sx, sy);
+    s = Math.min(24, safeS * 0.9);
+    const actualW = T * s + leftExtra + rightExtra + widthMargin * 2;
+    const actualH = D * s + topPad + bottomPad + heightMargin * 2;
     const extraW = Math.max(0, cw - actualW);
     const extraH = Math.max(0, ch - actualH);
     margin = {
-      l: leftExtra + widthMargin + innerPadX + extraW / 2,
-      r: rightExtra + widthMargin + innerPadX + extraW / 2,
-      t: topPad + heightMargin + innerPadY + extraH / 2,
-      b: bottomPad + heightMargin + innerPadY + extraH / 2
+      l: leftExtra + widthMargin + extraW / 2,
+      r: rightExtra + widthMargin + extraW / 2,
+      t: topPad + heightMargin + extraH / 2,
+      b: bottomPad + heightMargin + extraH / 2
     };
+    viewW = cw;
+    viewH = ch;
   }
 
   function enforce(){
-    let D = clamp(+Dv.value || 24, 24, 50);
-    let T = clamp(+Tv.value || 70, 2, 70);
-    let A = clamp(+Av.value || 30, 16, 70);
-    let B = clamp(+Bv.value || 16, 16, BMAX);
-
-    const maxDeltaA = Math.floor(70 * tan15);
-
-    if (B > D - 8){
-      B = Math.max(16, Math.min(BMAX, D - 8));
-    }
-    if (D - B > maxDeltaA){
-      B = Math.max(16, Math.min(BMAX, D - maxDeltaA));
-    }
-
-    let Tmin = Math.ceil(1.5 * D);
-    if (T > 70) T = 70;
-    if (T < Tmin){
-      if (Tmin > 70){
-        D = Math.min(D, Math.floor(70 / 1.5));
-        D = clamp(D, 24, 50);
-        Tmin = Math.ceil(1.5 * D);
-        if (B > D - 8){
-          B = Math.max(16, Math.min(BMAX, D - 8));
-        }
-        if (D - B > maxDeltaA){
-          B = Math.max(16, Math.min(BMAX, D - maxDeltaA));
-        }
-      }
-      T = Math.max(T, Tmin);
-    }
-    T = clamp(T, Tmin, 70);
-
+    let D = +Dv.value||24, T = +Tv.value||70, A = +Av.value||30, B = +Bv.value||16;
+    B = clamp(B, 16, BMAX);
+    D = clamp(D, 24, 50);
+    if (B > 16){ D = B + 8; if (D > 50){ D = 50; B = 42; } }
+    if (B > D - 8){ const need = B + 8; if (need <= 50) D = need; else { D = 50; B = 42; } }
+    const Tmin = Math.ceil(1.5 * D);
+    if (T < Tmin) T = Tmin;
+    if (T > 70){ D = Math.floor(70/1.5); if (B > 16) B = D - 8; T = 70; }
     let Areq = Math.ceil((D - B) / tan15);
     if (Areq > 70){
-      B = Math.max(16, Math.min(BMAX, D - maxDeltaA));
+      const maxDelta = Math.floor(70 * tan15);
+      D = Math.min(50, Math.max(24, B + maxDelta));
+      if (B > 16) B = D - 8;
       Areq = Math.ceil((D - B) / tan15);
-      if (Areq > 70){
-        Areq = 70;
-      }
     }
     A = clamp(Math.max(A, Areq, 16), 16, 70);
-    if (A > T){
-      T = clamp(A, Tmin, 70);
-    }
-
+    if (A > T) T = clamp(A, Tmin, 70);
     Dv.value = Dr.value = String(D);
     Tv.value = Tr.value = String(T);
     Av.value = Ar.value = String(A);
     Bv.value = Br.value = String(B);
-
     Tr.min = String(Math.min(70, Math.ceil(1.5*D))); Tr.max = "70";
     Ar.min = String(Math.max(16, Math.ceil((D - B) / tan15))); Ar.max = "70";
     Br.min = "16"; Br.max = String(BMAX);
@@ -318,6 +257,7 @@
   function update(){
     drawing.setAttribute('transform','');
     const {D,T,A,B} = enforce();
+    svgEl.setAttribute('viewBox', `0 0 ${viewW} ${viewH}`);
     const ox = margin.l, oy = margin.t;
     const Wpx = T*s, Hpx = D*s;
     const xA = ox + A*s;
@@ -358,15 +298,11 @@
     areaText.setAttribute('y', areaY);
     areaText.setAttribute('text-anchor','middle');
     const bbox = drawing.getBBox();
-    const padX = Math.max(18, Math.min(72, s * 8));
-    const padY = Math.max(24, Math.min(84, s * 9));
-    const vbX = Math.floor(bbox.x - padX);
-    const vbY = Math.floor(bbox.y - padY);
-    const vbW = Math.ceil(bbox.width + padX * 2);
-    const vbH = Math.ceil(bbox.height + padY * 2);
-    if (vbW > 0 && vbH > 0){
-      svgEl.setAttribute('viewBox', `${vbX} ${vbY} ${vbW} ${vbH}`);
-    }
+    const vb = svgEl.viewBox.baseVal;
+    const centerX = vb.x + vb.width / 2;
+    const bboxCenterX = bbox.x + bbox.width / 2;
+    const dx = centerX - bboxCenterX;
+    drawing.setAttribute('transform', `translate(${dx},0)`);
   }
 
   ['input','change'].forEach(ev => [Dv,Tv,Av,Bv,Dr,Tr,Ar,Br].forEach(el => el.addEventListener(ev, update)));
