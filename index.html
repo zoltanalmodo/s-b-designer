@@ -15,11 +15,11 @@
     display:flex;
     flex-direction:column;
   }
-   .container{
+  .container{
     flex:1 1 auto;
     display:flex;
     justify-content:center;
-    padding:4px;
+    padding:12px;
     background:rgba(255,231,150,0.5); /* fix: container padding */
   }
   .panel{
@@ -43,6 +43,7 @@
     bottom:0;
     height:12px;
     background:#fff;
+    border-radius:0 0 14px 14px;
   }
   @media (min-width: 980px){
     .container{padding:8px;}
@@ -51,7 +52,7 @@
   .canvasWrap{
     width:100%;
     padding:0;
-    margin:0 0 18px;
+    margin:0;
   }
   #svg{
     display:block;
@@ -60,7 +61,7 @@
     aspect-ratio:1300 / 820;
     max-width:none;
     background:#d9ecff;
-    border-radius:16px;
+    border-radius:0;
   }
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
@@ -75,6 +76,7 @@
     gap:6px;
     background:rgba(204,252,204,0.35); /* debug: inputs block */
     border-bottom:0;
+    margin:0;
   }
   .row{
     display:grid;
@@ -248,27 +250,56 @@
   }
 
   function enforce(){
-    let D = +Dv.value||24, T = +Tv.value||70, A = +Av.value||30, B = +Bv.value||16;
-    B = clamp(B, 16, BMAX);
-    D = clamp(D, 24, 50);
-    if (B > 16){ D = B + 8; if (D > 50){ D = 50; B = 42; } }
-    if (B > D - 8){ const need = B + 8; if (need <= 50) D = need; else { D = 50; B = 42; } }
-    const Tmin = Math.ceil(1.5 * D);
-    if (T < Tmin) T = Tmin;
-    if (T > 70){ D = Math.floor(70/1.5); if (B > 16) B = D - 8; T = 70; }
+    let D = clamp(+Dv.value || 24, 24, 50);
+    let T = clamp(+Tv.value || 70, 2, 70);
+    let A = clamp(+Av.value || 30, 16, 70);
+    let B = clamp(+Bv.value || 16, 16, BMAX);
+
+    const maxDeltaA = Math.floor(70 * tan15);
+
+    if (B > D - 8){
+      B = Math.max(16, Math.min(BMAX, D - 8));
+    }
+    if (D - B > maxDeltaA){
+      B = Math.max(16, Math.min(BMAX, D - maxDeltaA));
+    }
+
+    let Tmin = Math.ceil(1.5 * D);
+    if (T > 70) T = 70;
+    if (T < Tmin){
+      if (Tmin > 70){
+        D = Math.min(D, Math.floor(70 / 1.5));
+        D = clamp(D, 24, 50);
+        Tmin = Math.ceil(1.5 * D);
+        if (B > D - 8){
+          B = Math.max(16, Math.min(BMAX, D - 8));
+        }
+        if (D - B > maxDeltaA){
+          B = Math.max(16, Math.min(BMAX, D - maxDeltaA));
+        }
+      }
+      T = Math.max(T, Tmin);
+    }
+    T = clamp(T, Tmin, 70);
+
     let Areq = Math.ceil((D - B) / tan15);
     if (Areq > 70){
-      const maxDelta = Math.floor(70 * tan15);
-      D = Math.min(50, Math.max(24, B + maxDelta));
-      if (B > 16) B = D - 8;
+      B = Math.max(16, Math.min(BMAX, D - maxDeltaA));
       Areq = Math.ceil((D - B) / tan15);
+      if (Areq > 70){
+        Areq = 70;
+      }
     }
     A = clamp(Math.max(A, Areq, 16), 16, 70);
-    if (A > T) T = clamp(A, Tmin, 70);
+    if (A > T){
+      T = clamp(A, Tmin, 70);
+    }
+
     Dv.value = Dr.value = String(D);
     Tv.value = Tr.value = String(T);
     Av.value = Ar.value = String(A);
     Bv.value = Br.value = String(B);
+
     Tr.min = String(Math.min(70, Math.ceil(1.5*D))); Tr.max = "70";
     Ar.min = String(Math.max(16, Math.ceil((D - B) / tan15))); Ar.max = "70";
     Br.min = "16"; Br.max = String(BMAX);
