@@ -48,14 +48,15 @@
     .container{padding:8px;}
     .panel{padding:18px 20px;}
   }
-   .canvasWrap{
-    padding:20px 16px 120px;
+  .canvasWrap{
+    padding:24px 18px 48px;
     overflow:hidden;
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     justify-content:center;
-    min-height:clamp(360px, 70vh, 860px);
+    min-height:clamp(420px, 85vh, 900px);
     background:#ffe3e3;
+    border-radius:16px;
   }
   #svg{
     display:block;
@@ -64,7 +65,8 @@
     max-width:none;
     max-height:none;
     flex:1 1 auto;
-    background:#fff;
+    background:#d9ecff;
+    border-radius:12px;
   }
   .outline{fill:url(#hatch); stroke:#111; stroke-width:3.5}
   .proj{stroke:#111; stroke-width:1; fill:none}
@@ -192,21 +194,27 @@
     const cw = svgEl.clientWidth || 1300;
     const ch = svgEl.clientHeight || 820;
     const sidePad = Math.max(30, Math.min(44, cw * 0.115));
-    const topPad = Math.max(40, Math.min(56, ch * 0.12));
-    const bottomPad = Math.max(70, Math.min(110, ch * 0.18));
+    const topPad = Math.max(32, Math.min(56, ch * 0.12));
+    const bottomPad = Math.max(54, Math.min(110, ch * 0.18));
     const dimPad = sidePad;
     const leftExtra = dimPad;
     const rightExtra = dimPad;
     const widthMargin = Math.max(18, cw * 0.06);
-    const heightMargin = Math.max(20, ch * 0.08);
-    const availableW = Math.max(140, cw - (leftExtra + rightExtra + widthMargin * 2));
-    const availableH = Math.max(200, ch - (topPad + bottomPad + heightMargin * 2));
+    const heightMargin = Math.max(16, ch * 0.08);
+    const frameHeight = topPad + bottomPad + heightMargin * 2;
+    const rawAvailableW = cw - (leftExtra + rightExtra + widthMargin * 2);
+    const rawAvailableH = ch - frameHeight;
+    const availableW = Math.max(140, rawAvailableW);
+    const availableH = Math.max(200, rawAvailableH);
     const sx = availableW / T;
     const sy = availableH / D;
-    const safeS = Math.min(sx, sy);
-    s = Math.min(28, safeS);
+    let safeS = Math.min(sx, sy);
+    if (rawAvailableH > 0){
+      safeS = Math.min(safeS, rawAvailableH / D);
+    }
+    s = Math.min(28, Math.max(0.1, safeS));
     const actualW = T * s + leftExtra + rightExtra + widthMargin * 2;
-    const actualH = D * s + topPad + bottomPad + heightMargin * 2;
+    const actualH = D * s + frameHeight;
     const extraW = Math.max(0, cw - actualW);
     const extraH = Math.max(0, ch - actualH);
     margin = {
