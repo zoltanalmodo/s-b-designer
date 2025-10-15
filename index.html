@@ -175,7 +175,6 @@
 
   let s = 4;
   let margin = { l:56, t:64, r:56, b:120 };
-  let viewW = 1300, viewH = 820;
   const projOver = 10, gap = 40, tan15 = Math.tan(15 * Math.PI/180);
   const BMAX = 42;
 
@@ -233,7 +232,7 @@
       const fallbackH = rawRoomH > 0 ? rawRoomH / Math.max(D, 1) : 0.12;
       safeS = Math.max(0.12, Math.min(fallbackW, fallbackH));
     }
-    const shrink = cw <= 540 ? 0.86 : cw <= 900 ? 0.9 : 0.95;
+    const shrink = cw <= 540 ? 0.96 : cw <= 900 ? 0.98 : 1;
     safeS *= shrink;
     s = Math.min(28, Math.max(0.12, safeS));
     const actualW = T * s + structuralW + innerPadX * 2;
@@ -246,8 +245,6 @@
       t: topPad + heightMargin + innerPadY + extraH / 2,
       b: bottomPad + heightMargin + innerPadY + extraH / 2
     };
-    viewW = cw;
-    viewH = ch;
   }
 
   function enforce(){
@@ -290,7 +287,6 @@
   function update(){
     drawing.setAttribute('transform','');
     const {D,T,A,B} = enforce();
-    svgEl.setAttribute('viewBox', `0 0 ${viewW} ${viewH}`);
     const ox = margin.l, oy = margin.t;
     const Wpx = T*s, Hpx = D*s;
     const xA = ox + A*s;
@@ -331,11 +327,15 @@
     areaText.setAttribute('y', areaY);
     areaText.setAttribute('text-anchor','middle');
     const bbox = drawing.getBBox();
-    const vb = svgEl.viewBox.baseVal;
-    const centerX = vb.x + vb.width / 2;
-    const bboxCenterX = bbox.x + bbox.width / 2;
-    const dx = centerX - bboxCenterX;
-    drawing.setAttribute('transform', `translate(${dx},0)`);
+    const padX = Math.max(18, Math.min(72, s * 8));
+    const padY = Math.max(24, Math.min(84, s * 9));
+    const vbX = Math.floor(bbox.x - padX);
+    const vbY = Math.floor(bbox.y - padY);
+    const vbW = Math.ceil(bbox.width + padX * 2);
+    const vbH = Math.ceil(bbox.height + padY * 2);
+    if (vbW > 0 && vbH > 0){
+      svgEl.setAttribute('viewBox', `${vbX} ${vbY} ${vbW} ${vbH}`);
+    }
   }
 
   ['input','change'].forEach(ev => [Dv,Tv,Av,Bv,Dr,Tr,Ar,Br].forEach(el => el.addEventListener(ev, update)));
