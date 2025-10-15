@@ -262,7 +262,6 @@
   function update(){
     drawing.setAttribute('transform','');
     const {D,T,A,B} = enforce();
-    svgEl.setAttribute('viewBox', `0 0 ${viewW} ${viewH}`);
     const ox = margin.l, oy = margin.t;
     const Wpx = T*s, Hpx = D*s;
     const xA = ox + A*s;
@@ -303,11 +302,15 @@
     areaText.setAttribute('y', areaY);
     areaText.setAttribute('text-anchor','middle');
     const bbox = drawing.getBBox();
-    const vb = svgEl.viewBox.baseVal;
-    const centerX = vb.x + vb.width / 2;
-    const bboxCenterX = bbox.x + bbox.width / 2;
-    const dx = centerX - bboxCenterX;
-    drawing.setAttribute('transform', `translate(${dx},0)`);
+    const padX = Math.max(28, Math.min(96, s * 6));
+    const padY = Math.max(36, Math.min(120, s * 7.5));
+    const vbX = Math.floor(bbox.x - padX);
+    const vbY = Math.floor(bbox.y - padY);
+    const vbW = Math.ceil(bbox.width + padX * 2);
+    const vbH = Math.ceil(bbox.height + padY * 2);
+    if (vbW > 0 && vbH > 0){
+      svgEl.setAttribute('viewBox', `${vbX} ${vbY} ${vbW} ${vbH}`);
+    }
   }
 
   ['input','change'].forEach(ev => [Dv,Tv,Av,Bv,Dr,Tr,Ar,Br].forEach(el => el.addEventListener(ev, update)));
